@@ -1,32 +1,80 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [money, setMoney] = useState(0);
+  const [autoClicks, setAutoClicks] = useState(0)
+  const [small, setSmall] = useState(0)
+  const [medium, setMedium] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMoney(prevMoney => prevMoney + autoClicks)
+    }, 10000)
+    console.log('money changed')
+    return () => clearInterval(interval)
+  }, [autoClicks])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMoney(prevMoney => prevMoney + small)
+    }, 1000)
+    console.log('money changed')
+    return () => clearInterval(interval)
+  }, [small])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMoney(prevMoney => prevMoney + (medium * 10))
+    }, 1000)
+    console.log('money changed')
+    return () => clearInterval(interval)
+  }, [medium])
+
+  function buyAutoClick() {
+    if (money >= 10) {
+      setAutoClicks(autoClicks + 1)
+      setMoney(money - 10)
+    }
+  }
+
+  function buySmall() {
+    if (money >= 100) {
+      setSmall(small + 1)
+      setMoney(money - 100)
+    }
+  }
+
+  function buyMedium() {
+    if (money >= 500) {
+      setMedium(medium + 1)
+      setMoney(money - 500)
+    }
+  }
 
   return (
-    <div className="App">
+    <div className="app-container">
+      <h1>Money: {money}</h1>
+      <h3>Auto Clicks: {autoClicks}</h3>
+      <h3>Smalls: {small}</h3>
+      <h3>Mediums: {medium}</h3>
+      <button className='main-click' onClick={() => setMoney(money + 1)}>click</button>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <h2>store</h2>
+        <div className='store-item'>
+          <p>auto-clicker (cost:10) [+1 money per 10 seconds]</p>
+        <button onClick={buyAutoClick}>buy auto click</button>
+        </div>
+        <div className='store-item'>
+          <p>small (cost:100) [+1 money per second]</p>
+        <button onClick={buySmall}>buy small</button>
+        </div>
+        <div className='store-item'>
+          <p>medium (cost: 1000) [+10 money per second]</p>
+        <button onClick={buyMedium}>buy medium</button>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </div>
   )
 }
